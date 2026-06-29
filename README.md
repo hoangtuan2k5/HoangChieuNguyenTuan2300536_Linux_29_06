@@ -1,8 +1,8 @@
 <div align="center">
 
-# Bài thực hành Linux ngày 29/06
+# Bài giữa kỳ Linux ngày 29/06
 
-**Lời giải Đề của Tuấn**
+**Lời giải đề giữa kỳ của Tuấn**
 
 | Họ và tên | Mã sinh viên |
 | --- | --- |
@@ -30,7 +30,7 @@
 
 ![Sơ đồ xử lý Đề của Tuấn](assets/diagram-de-tuan.png)
 
-## Nội dung bài làm
+## Nội dung bài giữa kỳ
 
 Script `scripts/de_tuan.sh` thực hiện lần lượt 10 câu của đề:
 
@@ -53,7 +53,7 @@ Script `scripts/de_tuan.sh` thực hiện lần lượt 10 câu của đề:
 
 ## Cách chạy
 
-Thay địa chỉ IP và mạng theo phòng thực hành:
+Thay địa chỉ IP và mạng theo phòng thi giữa kỳ:
 
 ```bash
 chmod +x scripts/de_tuan.sh
