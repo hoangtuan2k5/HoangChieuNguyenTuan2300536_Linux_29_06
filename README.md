@@ -27,7 +27,7 @@ Kiểm tra xem hệ thống có cài đặt **NFS** hay không. Nếu chưa đư
 
 ```bash
 if ! rpm -q nfs-utils >/dev/null 2>&1; then
-    rpm -ivh /path/to/nfs-utils.rpm
+    sudo yum install -y nfs-utils || sudo apt-get update && sudo apt-get install -y nfs-kernel-server
 fi
 ```
 
@@ -37,7 +37,7 @@ Kiểm tra xem hệ thống có cài đặt **PORTMAP** hay không. Nếu chưa 
 
 ```bash
 if ! rpm -q portmap >/dev/null 2>&1 && ! rpm -q rpcbind >/dev/null 2>&1; then
-    rpm -ivh /path/to/portmap.rpm
+    sudo yum install -y rpcbind || sudo apt-get install -y rpcbind
 fi
 ```
 
@@ -46,8 +46,8 @@ fi
 Export thư mục `/usr/share` chỉ cho phép máy có địa chỉ `192.168.xx.yy` mount vào mount point `/mnt/share` để sử dụng.
 
 ```bash
-mkdir -p /mnt/share
-grep -q "^/usr/share " /etc/exports || echo "/usr/share 192.168.xx.yy(ro,sync,no_subtree_check)" >> /etc/exports
+sudo mkdir -p /mnt/share
+grep -q "^/usr/share " /etc/exports || echo "/usr/share 192.168.1.100(ro,sync,no_subtree_check)" | sudo tee -a /etc/exports
 ```
 
 ## Câu 4 (1 điểm)
@@ -55,13 +55,13 @@ grep -q "^/usr/share " /etc/exports || echo "/usr/share 192.168.xx.yy(ro,sync,no
 Export thư mục `/soft` với quyền **RW** và chỉ cho phép các máy trong mạng `192.168.xx.0/24` mount vào mount point `/mnt/soft`.
 
 ```bash
-mkdir -p /soft
-grep -q "^/soft " /etc/exports || echo "/soft 192.168.xx.0/24(rw,sync,no_subtree_check)" >> /etc/exports
+sudo mkdir -p /soft
+grep -q "^/soft " /etc/exports || echo "/soft 192.168.1.0/24(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
 
-service rpcbind start
-service nfs-server start
-exportfs -ra
-exportfs -v
+sudo systemctl start rpcbind || sudo service rpcbind start
+sudo systemctl start nfs-server || sudo service nfs-server start
+sudo exportfs -ra
+sudo exportfs -v
 ```
 
 ## Câu 5 (1 điểm)
@@ -85,9 +85,9 @@ rpcinfo -p localhost | grep -E "portmapper|100000"
 Kiểm tra và xử lý các sự cố thống kê lỗi trên **NFS Server**.
 
 ```bash
-systemctl status nfs-server --no-pager
-journalctl -u nfs-server -n 30 --no-pager
-nfsstat -s
+sudo systemctl status nfs-server --no-pager || true
+sudo journalctl -u nfs-server -n 30 --no-pager || true
+sudo nfsstat -s || true
 ```
 
 ## Câu 8 (1 điểm)
@@ -103,8 +103,8 @@ findmnt
 Xem các export directory.
 
 ```bash
-exportfs -v
-showmount -e localhost
+sudo exportfs -v
+showmount -e localhost || true
 ```
 
 ## Câu 10 (1 điểm)
