@@ -15,11 +15,6 @@
 ```text
 .
 ├── README.md
-├── assets/
-│   ├── code-de-tuan.png
-│   └── diagram-de-tuan.png
-├── diagrams/
-│   └── de_tuan_flow.puml
 ├── scripts/
 │   └── de_tuan.sh
 └── tests/
@@ -120,11 +115,3 @@ Theo dõi và thống kê sử dụng tài nguyên hệ thống của User.
 ps -eo user,pid,%cpu,%mem,comm --sort=user | head -50
 top -b -n 1 | head -30
 ```
-
-## Sơ đồ xử lý
-
-![Sơ đồ xử lý Đề của Tuấn](assets/diagram-de-tuan.png)
-
-## Ảnh chụp mã nguồn
-
-![Ảnh chụp mã nguồn Đề của Tuấn](assets/code-de-tuan.png)
