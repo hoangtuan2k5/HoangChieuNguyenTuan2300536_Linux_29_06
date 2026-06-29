@@ -21,6 +21,15 @@
     └── run_tests.sh
 ```
 
+## Hướng dẫn chạy nhanh (Copy & Paste)
+
+*(Lưu ý: Thay đổi các địa chỉ IP trong lệnh dưới cho phù hợp với cấu hình mạng thực tế của bạn)*
+
+```bash
+chmod +x scripts/de_tuan.sh
+sudo CLIENT_IP=192.168.1.10 CLIENT_NET=192.168.1.0/24 SERVER_IP=192.168.1.1 bash scripts/de_tuan.sh
+```
+
 ## Câu 1 (1 điểm)
 
 Kiểm tra xem hệ thống có cài đặt **NFS** hay không. Nếu chưa được cài đặt thì dùng lệnh `rpm` để cài.
