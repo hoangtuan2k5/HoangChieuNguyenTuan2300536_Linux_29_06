@@ -5,6 +5,7 @@ CLIENT_IP="${CLIENT_IP:-192.168.xx.yy}"
 CLIENT_NET="${CLIENT_NET:-192.168.xx.0/24}"
 SERVER_IP="${SERVER_IP:-<ip-may-chu-nfs>}"
 EXPORTS_FILE="/etc/exports"
+NFS_SERVICE="nfs-server"
 
 require_root() {
     if [ "${EUID}" -ne 0 ]; then
@@ -43,6 +44,37 @@ install_rpm_if_missing() {
     rpm -ivh "${rpm_file}"
 }
 
+package_installed_deb() {
+    local package_name="$1"
+
+    dpkg-query -W -f='${Status}' "${package_name}" 2>/dev/null | grep -q "install ok installed"
+}
+
+install_deb_if_missing() {
+    local package_name="$1"
+
+    if package_installed_deb "${package_name}"; then
+        echo "Goi ${package_name} da duoc cai dat."
+        return
+    fi
+
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y "${package_name}"
+}
+
+install_package_if_missing() {
+    local rpm_package="$1"
+    local deb_package="$2"
+    local rpm_file="$3"
+
+    if command -v apt-get >/dev/null 2>&1 && command -v dpkg-query >/dev/null 2>&1; then
+        install_deb_if_missing "${deb_package}"
+    else
+        require_command "rpm"
+        install_rpm_if_missing "${rpm_package}" "${rpm_file}"
+    fi
+}
+
 start_service() {
     local service_name="$1"
 
@@ -64,14 +96,17 @@ validate_network_values() {
 
 cau_1() {
     print_title "Cau 1: Kiem tra va cai dat NFS"
-    require_command "rpm"
-    install_rpm_if_missing "nfs-utils" "${NFS_RPM:-}"
+    if command -v apt-get >/dev/null 2>&1 && command -v dpkg-query >/dev/null 2>&1; then
+        NFS_SERVICE="nfs-kernel-server"
+    fi
+    install_package_if_missing "nfs-utils" "nfs-kernel-server" "${NFS_RPM:-}"
 }
 
 cau_2() {
     print_title "Cau 2: Kiem tra va cai dat PORTMAP"
-    require_command "rpm"
-    if rpm -q "portmap" >/dev/null 2>&1; then
+    if command -v apt-get >/dev/null 2>&1 && command -v dpkg-query >/dev/null 2>&1; then
+        install_deb_if_missing "rpcbind"
+    elif rpm -q "portmap" >/dev/null 2>&1; then
         echo "Goi portmap da duoc cai dat."
     elif rpm -q "rpcbind" >/dev/null 2>&1; then
         echo "He thong dang dung rpcbind thay cho portmap."
@@ -95,7 +130,7 @@ cau_3_va_4() {
     grep -qxF "${soft_line}" "${EXPORTS_FILE}" || echo "${soft_line}" >> "${EXPORTS_FILE}"
 
     start_service "rpcbind"
-    start_service "nfs-server"
+    start_service "${NFS_SERVICE}"
     exportfs -ra
     exportfs -v
 
@@ -119,9 +154,9 @@ cau_6() {
 
 cau_7() {
     print_title "Cau 7: Kiem tra su co va thong ke loi tren NFS Server"
-    systemctl status nfs-server --no-pager || true
+    systemctl status "${NFS_SERVICE}" --no-pager || true
     systemctl status rpcbind --no-pager || true
-    journalctl -u nfs-server -n 50 --no-pager || true
+    journalctl -u "${NFS_SERVICE}" -n 50 --no-pager || true
     nfsstat -s || true
     exportfs -v
 }

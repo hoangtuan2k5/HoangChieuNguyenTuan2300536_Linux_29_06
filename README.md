@@ -66,6 +66,8 @@ Nếu máy chưa có gói cài đặt, truyền đường dẫn tệp RPM:
 sudo NFS_RPM=/duong/dan/nfs-utils.rpm PORTMAP_RPM=/duong/dan/portmap.rpm CLIENT_IP=192.168.1.10 CLIENT_NET=192.168.1.0/24 SERVER_IP=192.168.1.1 bash scripts/de_tuan.sh
 ```
 
+Trên Ubuntu hoặc Debian, script tự kiểm tra và cài các gói tương ứng là `nfs-kernel-server` và `rpcbind`.
+
 ## Kiểm thử
 
 ```bash
