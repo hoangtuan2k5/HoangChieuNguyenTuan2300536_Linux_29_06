@@ -78,11 +78,16 @@ install_package_if_missing() {
 start_service() {
     local service_name="$1"
 
-    if command -v systemctl >/dev/null 2>&1; then
+    if command -v systemctl >/dev/null 2>&1 && systemctl list-units >/dev/null 2>&1; then
         systemctl enable --now "${service_name}"
-    else
+    elif command -v service >/dev/null 2>&1; then
         service "${service_name}" start
-        chkconfig "${service_name}" on || true
+        if command -v chkconfig >/dev/null 2>&1; then
+            chkconfig "${service_name}" on || true
+        fi
+    else
+        echo "Khong tim thay lenh quan ly dich vu de khoi dong ${service_name}."
+        exit 1
     fi
 }
 
