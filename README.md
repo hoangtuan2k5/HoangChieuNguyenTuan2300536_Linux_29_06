@@ -26,8 +26,8 @@
 Kiểm tra xem hệ thống có cài đặt **NFS** hay không. Nếu chưa được cài đặt thì dùng lệnh `rpm` để cài.
 
 ```bash
-if ! rpm -q nfs-utils >/dev/null 2>&1; then
-    sudo yum install -y nfs-utils || sudo apt-get update && sudo apt-get install -y nfs-kernel-server
+if ! dpkg -s nfs-kernel-server >/dev/null 2>&1; then
+    sudo apt-get update && sudo apt-get install -y nfs-kernel-server
 fi
 ```
 
@@ -36,8 +36,8 @@ fi
 Kiểm tra xem hệ thống có cài đặt **PORTMAP** hay không. Nếu chưa được cài đặt thì dùng lệnh `rpm` để cài.
 
 ```bash
-if ! rpm -q portmap >/dev/null 2>&1 && ! rpm -q rpcbind >/dev/null 2>&1; then
-    sudo yum install -y rpcbind || sudo apt-get install -y rpcbind
+if ! dpkg -s rpcbind >/dev/null 2>&1; then
+    sudo apt-get update && sudo apt-get install -y rpcbind
 fi
 ```
 

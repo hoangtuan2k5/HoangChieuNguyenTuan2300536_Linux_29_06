@@ -30,18 +30,14 @@ if [[ "${CLIENT_IP}" == *xx* || "${CLIENT_NET}" == *xx* ]]; then
 fi
 
 title "Cau 1: Kiem tra va cai NFS"
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get install -y nfs-kernel-server
+if ! dpkg -s nfs-kernel-server >/dev/null 2>&1; then
+    apt-get update && apt-get install -y nfs-kernel-server
     NFS_SERVICE="nfs-kernel-server"
-elif ! rpm -q nfs-utils >/dev/null 2>&1; then
-    rpm -ivh "${NFS_RPM:?Dat NFS_RPM=/duong/dan/nfs-utils.rpm}"
 fi
 
 title "Cau 2: Kiem tra va cai PORTMAP"
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get install -y rpcbind
-elif ! rpm -q portmap >/dev/null 2>&1 && ! rpm -q rpcbind >/dev/null 2>&1; then
-    rpm -ivh "${PORTMAP_RPM:?Dat PORTMAP_RPM=/duong/dan/portmap.rpm}"
+if ! dpkg -s rpcbind >/dev/null 2>&1; then
+    apt-get update && apt-get install -y rpcbind
 fi
 
 title "Cau 3 va 4: Cau hinh export"
